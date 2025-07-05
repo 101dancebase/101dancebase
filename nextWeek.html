@@ -10,31 +10,40 @@
     <h3 id="status">請稍候，正在開啟預約表單...</h3>
 
     <script>
-      async function main() {
-        try {
-          document.getElementById("status").innerText = "初始化中...";
-          await liff.init({ liffId: "2007694269-P5MJkAJ7" });
+  async function main() {
+    try {
+      document.getElementById("status").innerText = "初始化中...";
+      await liff.init({ liffId: "2007694269-P5MJkAJ7" });
 
-          let userId = "";
-          if (liff.isLoggedIn()) {
-            const profile = await liff.getProfile();
-            userId = profile.userId;
-          }
-          //表單連結，1129681516是填lineid的表格id，有變動也要改
-          const formBase = "https://docs.google.com/forms/d/e/1FAIpQLScyXpHBJUq9tCDgkf5xc-ajcEdiZKeQWfIQRXoBZsAkErLMWw/viewform";
-          const entryParam = "entry.778493190=" + encodeURIComponent(userId);
-          const fullUrl = `${formBase}?${entryParam}`;
-
-          document.getElementById("status").innerText = "跳轉中...";
-          window.location.replace(fullUrl);
-
-        } catch (err) {
-          document.getElementById("status").innerText = "錯誤：" + err.message;
-          console.error(err);
-        }
+      // ✅ 沒登入就強制登入（登入完會 reload）
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
       }
 
-      main();
-    </script>
+      document.getElementById("status").innerText = "取得使用者資料中...";
+      const profile = await liff.getProfile();
+      const userId = profile.userId;
+
+      // ✅ 確認 console 看看 userId 是否抓到
+      console.log("取得的 userId:", userId);
+
+      // ✅ Google 表單連結（entry 後面請改為對應填入 LINE ID 欄位的 entry 編號）
+      const formBase = "https://docs.google.com/forms/d/e/1FAIpQLSerlBEBz3MJCiFIbGAav87uX_WU6s2Ce6at-vCo_J2e470hjg/viewform";
+      const entryParam = "entry.400083529=" + encodeURIComponent(userId);
+      const fullUrl = `${formBase}?${entryParam}`;
+
+      document.getElementById("status").innerText = "跳轉中...";
+      window.location.replace(fullUrl);
+
+    } catch (err) {
+      document.getElementById("status").innerText = "錯誤：" + err.message;
+      console.error("LIFF 錯誤", err);
+    }
+  }
+
+  main();
+</script>
+
   </body>
 </html>
