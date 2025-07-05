@@ -20,6 +20,9 @@
             liff.login(); // 強制登入
             return; // 等登入完會自動 reload 再執行
           }
+           const profile = await liff.getProfile();
+           const userId = profile.userId;
+
           //表單連結，1129681516是填lineid的表格id，有變動也要改
           const formBase = "https://docs.google.com/forms/d/e/1FAIpQLScyXpHBJUq9tCDgkf5xc-ajcEdiZKeQWfIQRXoBZsAkErLMWw/viewform";
           const entryParam = "entry.778493190=" + encodeURIComponent(userId);
